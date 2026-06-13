@@ -48,6 +48,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import android.content.Intent
+import android.net.Uri
 import com.example.data.GeneratedEmail
 import com.example.ui.EmailGeneratorViewModel
 import com.example.ui.GeneratedEmailItem
@@ -856,6 +858,7 @@ fun VariationItemRow(
                         "Dot Trick" -> Color(0xFFA855F7)
                         "Combined" -> Color(0xFFF43F5E)
                         "QA Preset" -> Color(0xFF10B981)
+                        "Platform Preset" -> Color(0xFFF59E0B)
                         else -> Color(0xFF0EA5E9)
                     }
 
@@ -877,6 +880,37 @@ fun VariationItemRow(
             Spacer(modifier = Modifier.width(8.dp))
 
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                val rowContext = LocalContext.current
+                IconButton(
+                    onClick = {
+                        try {
+                            val gmailIntent = Intent(Intent.ACTION_SENDTO).apply {
+                                data = Uri.parse("mailto:${item.email}")
+                                setPackage("com.google.android.gm")
+                            }
+                            rowContext.startActivity(gmailIntent)
+                        } catch (e: Exception) {
+                            val genericIntent = Intent(Intent.ACTION_SENDTO).apply {
+                                data = Uri.parse("mailto:${item.email}")
+                            }
+                            rowContext.startActivity(Intent.createChooser(genericIntent, "Compose Email"))
+                        }
+                    },
+                    modifier = Modifier
+                        .size(38.dp)
+                        .background(
+                            MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.5f),
+                            CircleShape
+                        ).testTag("compose_button_${item.email.hashCode()}")
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Send,
+                        contentDescription = "Compose Email",
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+
                 IconButton(
                     onClick = onCopy,
                     modifier = Modifier
@@ -1047,6 +1081,37 @@ fun SavedEmailItemRow(
                 )
 
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    val rowContext = LocalContext.current
+                    IconButton(
+                        onClick = {
+                            try {
+                                val gmailIntent = Intent(Intent.ACTION_SENDTO).apply {
+                                    data = Uri.parse("mailto:${saved.generatedEmail}")
+                                    setPackage("com.google.android.gm")
+                                }
+                                rowContext.startActivity(gmailIntent)
+                            } catch (e: Exception) {
+                                val genericIntent = Intent(Intent.ACTION_SENDTO).apply {
+                                    data = Uri.parse("mailto:${saved.generatedEmail}")
+                                }
+                                rowContext.startActivity(Intent.createChooser(genericIntent, "Compose Email"))
+                            }
+                        },
+                        modifier = Modifier
+                            .size(34.dp)
+                            .background(
+                                MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.4f),
+                                CircleShape
+                            )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Send,
+                            contentDescription = "Compose to saved",
+                            tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
+
                     IconButton(
                         onClick = onCopy,
                         modifier = Modifier.size(34.dp)

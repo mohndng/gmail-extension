@@ -5,6 +5,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.util.Log
+import com.example.BuildConfig
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Dispatchers
@@ -52,8 +53,8 @@ class UpdateChecker(private val context: Context) {
     val githubRepo: StateFlow<String> = _githubRepo.asStateFlow()
 
     // Current local version info
-    val localVersionCode: Int = 1
-    val localVersionName: String = "1.0"
+    val localVersionCode: Int = BuildConfig.VERSION_CODE
+    val localVersionName: String = BuildConfig.VERSION_NAME
 
     var isMockedOutdated: Boolean = false
         set(value) {

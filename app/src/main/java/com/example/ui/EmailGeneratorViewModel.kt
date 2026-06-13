@@ -179,12 +179,22 @@ class EmailGeneratorViewModel(
                 }
             }
             GenerationType.PLUS_COMMON_PRESETS -> {
-                val commonPresets = listOf(
-                    "test", "admin", "dev", "qa", "billing", "user", "guest", "beta", "stripe", "sandbox", "owner", "staff"
+                val socialPresets = listOf(
+                    "netflix", "youtube", "spotify", "facebook", "instagram", "twitter", "tiktok", "reddit",
+                    "disney", "amazon", "google", "apple", "microsoft", "linkedin", "pinterest", "github",
+                    "discord", "zoom", "twitch", "steam", "epicgames", "paypal", "stripe"
                 )
-                commonPresets.map { preset ->
-                    GeneratedEmailItem("$baseLocal+$preset@$domain", "QA Preset")
+                val qaPresets = listOf(
+                    "test", "admin", "dev", "qa", "billing", "user", "guest", "beta", "sandbox", "owner", "staff"
+                )
+                val results = mutableListOf<GeneratedEmailItem>()
+                socialPresets.forEach { preset ->
+                    results.add(GeneratedEmailItem("$baseLocal+$preset@$domain", "Platform Preset"))
                 }
+                qaPresets.forEach { preset ->
+                    results.add(GeneratedEmailItem("$baseLocal+$preset@$domain", "QA Preset"))
+                }
+                results
             }
             GenerationType.COMBINED_DOT_AND_PLUS -> {
                 // Apply a few dots variations (say, up to 5) and combine with random or preset tags

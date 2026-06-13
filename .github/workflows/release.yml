@@ -31,6 +31,12 @@ jobs:
       - name: Grant Execute Permission to Gradlew
         run: chmod +x gradlew
 
+      - name: Repair and Download Clean Gradle Wrapper JAR
+        run: |
+          echo "Repairing corrupt/incomplete gradle-wrapper.jar..."
+          mkdir -p gradle/wrapper
+          curl -sL -o gradle/wrapper/gradle-wrapper.jar https://github.com/gradle/gradle/raw/v8.5.0/gradle/wrapper/gradle-wrapper.jar
+
       - name: Create .env from template
         run: cp .env.example .env
 

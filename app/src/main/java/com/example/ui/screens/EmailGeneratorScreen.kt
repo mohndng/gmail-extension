@@ -257,7 +257,7 @@ fun EmailGeneratorScreen(
                             value = originalEmail,
                             onValueChange = { viewModel.setOriginalEmail(it) },
                             label = { Text("Gmail or Username") },
-                            placeholder = { Text("e.g. mohn.oaktale1@gmail.com") },
+                            placeholder = { Text("e.g. youremail@gmail.com") },
                             leadingIcon = {
                                 Icon(Icons.Default.Email, contentDescription = "Email icon")
                             },
@@ -1099,12 +1099,7 @@ fun SettingsDialog(
     onDismiss: () -> Unit
 ) {
     // Collect settings and status from viewmodel
-    val githubOwner by viewModel.updateChecker.githubOwner.collectAsStateWithLifecycle()
-    val githubRepo by viewModel.updateChecker.githubRepo.collectAsStateWithLifecycle()
     val updateState by viewModel.updateState.collectAsStateWithLifecycle()
-
-    var ownerText by remember { mutableStateOf(githubOwner) }
-    var repoText by remember { mutableStateOf(githubRepo) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -1214,40 +1209,18 @@ fun SettingsDialog(
 
                 HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
 
-                // Section 2: Github properties
+                // Section 2: App Updates
                 Text(
-                    text = "🌐 GitHub Update Sync",
+                    text = "🌐 Application Updates",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
                 )
 
                 Text(
-                    text = "Configure the source GitHub repository path to verify live update_config.json configurations over the internet.",
+                    text = "This application checks for official updates automatically. You can also trigger a manual check to ensure you have the latest features and security improvements.",
                     fontSize = 11.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                // Owner Field
-                OutlinedTextField(
-                    value = ownerText,
-                    onValueChange = { ownerText = it },
-                    label = { Text("GitHub Owner / Name") },
-                    placeholder = { Text("e.g. mohn-oaktale1") },
-                    singleLine = true,
-                    textStyle = LocalTextStyle.current.copy(fontSize = 13.sp),
-                    modifier = Modifier.fillMaxWidth().testTag("github_owner_input")
-                )
-
-                // Repo Field
-                OutlinedTextField(
-                    value = repoText,
-                    onValueChange = { repoText = it },
-                    label = { Text("GitHub Repository") },
-                    placeholder = { Text("e.g. gmail-generator") },
-                    singleLine = true,
-                    textStyle = LocalTextStyle.current.copy(fontSize = 13.sp),
-                    modifier = Modifier.fillMaxWidth().testTag("github_repo_input")
                 )
 
                 // Update configuration status view
@@ -1257,6 +1230,19 @@ fun SettingsDialog(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Column(modifier = Modifier.padding(12.dp)) {
+                        Text(
+                            text = "Official Repository:",
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = "mohndng/gmail-extension",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = "Status check:",
                             fontSize = 10.sp,
@@ -1288,10 +1274,8 @@ fun SettingsDialog(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    // Update settings button
                     Button(
                         onClick = {
-                            viewModel.setGithubConfig(ownerText, repoText)
                             viewModel.checkForUpdates(force = true)
                         },
                         shape = RoundedCornerShape(8.dp),
@@ -1299,7 +1283,7 @@ fun SettingsDialog(
                     ) {
                         Icon(imageVector = Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("Save & Quick Sync", fontSize = 12.sp)
+                        Text("Check for Updates Now", fontSize = 12.sp)
                     }
                 }
 

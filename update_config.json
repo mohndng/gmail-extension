@@ -1,0 +1,7 @@
+{
+  "latestVersionCode": 1,
+  "latestVersionName": "1.0",
+  "updateUrl": "https://www.github.com/mohndng/gmail-extension/",
+  "updateMessage": "Initial release of Gmail Extension. Fixed update module and configured raw configurations securely.",
+  "isMandatory": true
+}

@@ -44,11 +44,11 @@ class UpdateChecker(private val context: Context) {
     private val _updateState = MutableStateFlow<UpdateState>(UpdateState.Idle)
     val updateState: StateFlow<UpdateState> = _updateState.asStateFlow()
 
-    // Default configuration: User's requested custom paths
-    private val _githubOwner = MutableStateFlow("mohn-oaktale1")
+    // Default configuration: Official destination path
+    private val _githubOwner = MutableStateFlow("mohndng")
     val githubOwner: StateFlow<String> = _githubOwner.asStateFlow()
 
-    private val _githubRepo = MutableStateFlow("gmail-generator")
+    private val _githubRepo = MutableStateFlow("gmail-extension")
     val githubRepo: StateFlow<String> = _githubRepo.asStateFlow()
 
     // Current local version info
@@ -62,7 +62,7 @@ class UpdateChecker(private val context: Context) {
                 _updateState.value = UpdateState.UpdateRequired(
                     latestVersionCode = 2,
                     latestVersionName = "2.0-SIMULATED",
-                    updateUrl = "https://github.com/${_githubOwner.value}/${_githubRepo.value}/releases",
+                    updateUrl = "https://www.github.com/mohndng/gmail-extension/",
                     updateMessage = "MANDATORY UPDATE DEMONSTRATION: As requested, when this repository on GitHub is updated (or simulated here), this pop-up appears in the app with absolutely no close button since it is mandatory."
                 )
             } else {
@@ -112,11 +112,16 @@ class UpdateChecker(private val context: Context) {
             return
         }
 
+        val previousState = _updateState.value
         _updateState.value = UpdateState.Checking
 
         // 1. Check Internet Connection first!
         if (!isNetworkAvailable()) {
-            _updateState.value = UpdateState.NoInternet
+            if (previousState == UpdateState.Idle || force) {
+                _updateState.value = UpdateState.NoInternet
+            } else {
+                _updateState.value = previousState
+            }
             return
         }
 
@@ -151,7 +156,11 @@ class UpdateChecker(private val context: Context) {
                 }
             } catch (e: Exception) {
                 Log.e("UpdateChecker", "Error checking for updates: ${e.message}", e)
-                _updateState.value = UpdateState.Error(e.localizedMessage ?: "Unknown connection error")
+                if (previousState == UpdateState.Idle || force) {
+                    _updateState.value = UpdateState.Error(e.localizedMessage ?: "Unknown connection error")
+                } else {
+                    _updateState.value = previousState
+                }
             }
         }
     }
@@ -169,7 +178,7 @@ class UpdateChecker(private val context: Context) {
                     _updateState.value = UpdateState.UpdateRequired(
                         latestVersionCode = responseObj.latestVersionCode,
                         latestVersionName = responseObj.latestVersionName,
-                        updateUrl = responseObj.updateUrl,
+                        updateUrl = "https://www.github.com/mohndng/gmail-extension/",
                         updateMessage = responseObj.updateMessage
                     )
                 } else {

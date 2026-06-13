@@ -57,7 +57,7 @@ class EmailGeneratorViewModel(
     }
 
     // Inputs
-    private val _originalEmail = MutableStateFlow("mohn.oaktale1@gmail.com")
+    private val _originalEmail = MutableStateFlow("youremail@gmail.com")
     val originalEmail: StateFlow<String> = _originalEmail.asStateFlow()
 
     private val _generationType = MutableStateFlow(GenerationType.PLUS_COMMON_PRESETS)
@@ -101,6 +101,18 @@ class EmailGeneratorViewModel(
         generateVariations()
         // Automatically run mandatory update check on startup
         checkForUpdates()
+        
+        // Setup periodic check every 3 minutes to automatically pop up if an update is found while in-use
+        viewModelScope.launch {
+            while (true) {
+                kotlinx.coroutines.delay(180_000) // Check every 3 minutes
+                try {
+                    updateChecker.runUpdateCheck()
+                } catch (e: Exception) {
+                    // Ignore background periodic check failures gracefully to not disrupt session
+                }
+            }
+        }
     }
 
     fun setOriginalEmail(email: String) {

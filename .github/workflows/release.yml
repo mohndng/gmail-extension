@@ -34,13 +34,23 @@ jobs:
       - name: Create .env from template
         run: cp .env.example .env
 
-      - name: Decode Debug Keystore
+      - name: Set up Keystore
         run: |
           if [ -f "debug.keystore.base64" ]; then
+            echo "Decoding debug.keystore from base64..."
             base64 -d debug.keystore.base64 > debug.keystore
+          elif [ -f "debug.keystore" ]; then
+            echo "debug.keystore already exists."
           else
-            echo "debug.keystore.base64 not found, cannot build signed debug configuration."
-            exit 1
+            echo "Generating new debug.keystore dynamically using keytool..."
+            keytool -genkey -v -keystore debug.keystore \
+              -storepass android \
+              -alias androiddebugkey \
+              -keypass android \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000 \
+              -dname "CN=Android Debug, O=Android, C=US"
           fi
 
       - name: Build Debug APK
